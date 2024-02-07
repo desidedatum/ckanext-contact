@@ -5,6 +5,7 @@
 # Created by the Natural History Museum in London, UK
 import logging
 import socket
+import json
 from ckan import logic
 from ckan.common import asbool
 from ckan.lib import mailer
@@ -149,7 +150,10 @@ def submit():
         # send the email to each name/email pair
         for name, email in zip(names, emails):
             try:
-                mailer.mail_recipient(name, email, **mail_dict)
+                site_title = toolkit.config.get('ckan.site_title')
+                site_title = json.loads(site_title)["es"]
+                site_url = toolkit.config.get('ckan.site_url')
+                mailer._mail_recipient(name, email, site_title, site_url, **mail_dict)
             except (mailer.MailerException, socket.error):
                 email_success = False
 
